@@ -18,7 +18,7 @@ def generate_token(user_id, expires_in=3600):
 def decode_token(token):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
+        return payload.get("user_id")
     except jwt.ExpiredSignatureError:
         return None
     except jwt.InvalidTokenError:

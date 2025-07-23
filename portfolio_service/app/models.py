@@ -18,14 +18,14 @@ class Portfolio(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(120), nullable=False)
     name = db.Column(db.String(120), nullable=False)
-    stock = db.Column(db.String(120), nullable=False)
+    stocks = db.Column(db.Text, nullable=False)
 
     def to_dict(self):
         return {
             "id": self.id,
             "user_id": self.user_id,
             "name": self.name,
-            "stock": json.loads(self.stock)
+            "stocks": json.loads(self.stocks)
             }
 
 class UserToken(db.Model):

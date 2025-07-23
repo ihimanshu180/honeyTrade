@@ -59,3 +59,15 @@ GET /portfolio/<id>
 
 GET /valuation/<portfolio_id>
 
+
+## Configuration
+
+The market service expects an Alpha Vantage API key via the `ALPHA_VANTAGE_API_KEY` environment variable. Create a `.env` file inside `market-service/` with:
+
+```
+ALPHA_VANTAGE_API_KEY=your_api_key_here
+```
+
+Do **not** commit this file to version control. If upgrading from earlier versions, remove the tracked `INfo` file and provide your own key using the environment variable above.
+
+The portfolio database now uses a `stocks` column. If you previously ran the service, delete the old `portfolio.db` or migrate the `stock` column to `stocks` before starting the service.
