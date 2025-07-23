@@ -25,24 +25,6 @@ def create_portfolio():
     db.session.commit()
     return jsonify(portfolio.to_dict())
 
-"""
-NOte: why stocks=json.dumps(stocks)
-
-✅ Purpose:
-This line converts the stocks list (a Python object) into a JSON string before storing it in the database.
-
-💡 Why?
-In your Portfolio model:
-stocks = db.Column(db.Text, nullable=False)
-You're storing the stocks as Text, which only accepts strings, not Python lists or objects.
-
-So we use json.dumps() to serialize the list into a string (like '["AAPL", "TSLA", "GOOGL"]').
-
-When retrieving the portfolio, you reverse this using:
-
-json.loads(self.stocks)
-"""
-
 
 @bp.route("/<int:portfolio_id>", methods=["DELETE"])
 @token_required

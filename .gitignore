@@ -1,0 +1,12 @@
+# Environment and secrets
+INfo
+market-service/.env
+*.db
+
+# Python artifacts
+__pycache__/
+*.pyc
+
+# IDE files
+.idea/
+
