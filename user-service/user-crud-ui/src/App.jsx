@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import Header from "@/components/Header";
+import PortfolioForm from "@/components/PortfolioForm";
+import PortfolioList from "@/components/PortfolioList";
+import './index.css';
 
 function App() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
@@ -11,9 +15,6 @@ function App() {
   const [stockResult, setStockResult] = useState(null);
   const [bulkPrices, setBulkPrices] = useState({});
   const [source, setSource] = useState("alpha");
-  const [portfolioName, setPortfolioName] = useState("");
-  const [portfolioSymbols, setPortfolioSymbols] = useState("");
-  const [portfolios, setPortfolios] = useState([]);
 
   const handleRegister = async () => {
     const res = await fetch("http://localhost:5000/api/users/register", {
@@ -69,58 +70,28 @@ function App() {
     setBulkPrices(data);
   };
 
-  const fetchPortfolios = async () => {
-    const res = await fetch("http://localhost:5003/portfolios/", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    setPortfolios(data);
-  };
-
-  const createPortfolio = async () => {
-    const res = await fetch("http://localhost:5003/portfolios/create", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name: portfolioName, stocks: portfolioSymbols.split(",") })
-    });
-    await res.json();
-    fetchPortfolios();
-  };
-
-  const deletePortfolio = async (id) => {
-    await fetch(`http://localhost:5003/portfolios/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    fetchPortfolios();
-  };
-
-  const getValue = async (id) => {
-    const res = await fetch(`http://localhost:5003/portfolios/${id}/value`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    alert(`Total Value: ₹${data.total_value}`);
-  };
-
   useEffect(() => {
     fetchUsers();
-    if (token) fetchPortfolios();
-  }, [token]);
+  }, []);
 
   return (
-    <div className="max-w-xl mx-auto p-4 space-y-6">
-      <h1 className="text-2xl font-bold mb-4">User Management & Portfolio UI</h1>
+    <div className="max-w-3xl mx-auto p-4 space-y-6 bg-gradient-to-b from-green-100 to-white shadow-md rounded-xl min-h-screen">
+      <Header isLoggedIn={!!token} onLogout={() => setToken("")} />
+
+      <PortfolioForm token={token} onPortfolioCreated={() => {}} />
+
+      <PortfolioList />
 
       {/* User Registration / Login */}
       <Card>
         <CardContent className="p-4 space-y-2">
+          <h2 className="text-xl font-bold">User Access</h2>
           <Input placeholder="Username" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} />
           <Input placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
           <Input type="password" placeholder="Password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          <div className="bg-gradient-to-r from-green-50 via-yellow-100 to-red-200 text-center p-6 rounded-lg shadow">
+            🌟 HoneyTrade UI Gradient Test
+          </div>
           <div className="flex gap-2">
             <Button onClick={handleRegister}>Register</Button>
             <Button onClick={handleLogin}>Login</Button>
@@ -160,26 +131,6 @@ function App() {
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Portfolio Management */}
-      <Card>
-        <CardContent className="space-y-4 p-4">
-          <h2 className="text-xl font-bold">📊 Portfolio Manager</h2>
-          <Input placeholder="Portfolio Name" value={portfolioName} onChange={(e) => setPortfolioName(e.target.value)} />
-          <Input placeholder="Comma separated symbols (e.g. AAPL,TSLA)" value={portfolioSymbols} onChange={(e) => setPortfolioSymbols(e.target.value)} />
-          <Button onClick={createPortfolio}>Create Portfolio</Button>
-          {portfolios.map((p) => (
-            <div key={p.id} className="border p-2 rounded">
-              <div><strong>{p.name}</strong></div>
-              <div>Stocks: {p.stocks.join(", ")}</div>
-              <div className="flex gap-2 mt-2">
-                <Button size="sm" onClick={() => getValue(p.id)}>Value</Button>
-                <Button size="sm" variant="destructive" onClick={() => deletePortfolio(p.id)}>Delete</Button>
-              </div>
-            </div>
-          ))}
         </CardContent>
       </Card>
     </div>
